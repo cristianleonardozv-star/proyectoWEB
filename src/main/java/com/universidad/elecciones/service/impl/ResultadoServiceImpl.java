@@ -32,13 +32,19 @@ public class ResultadoServiceImpl implements ResultadoService {
 
     
     public String registrarVoto(VotoRequestDTO dto, String ip) {
+    	System.out.println("=== VOTO RECIBIDO ===");
+    	System.out.println("Elección ID: " + dto.getEleccionId());
+    	System.out.println("Votante ID: " + dto.getVotanteId());
+    	System.out.println("Candidato ID: " + dto.getCandidatoId());
+
 
         Eleccion eleccion = eleccionRepo.findById(dto.getEleccionId())
                 .orElseThrow();
 
-        if (!"ABIERTA".equals(eleccion.getEstado()))
+        if (eleccion.getEstado() != EstadoEleccion.ABIERTA)
             throw new RuntimeException("La elección no está abierta");
 
+//tenemos un error aqui porque en el id se esta guardando la cedula
         Censo censo = censoRepo.findByEleccionId(dto.getEleccionId())
                 .stream()
                 .filter(c -> c.getVotante().getId().equals(dto.getVotanteId()))
